@@ -65,6 +65,173 @@ vendor/bin/phpstorm-inspect inspect \
   --format=text
 ```
 
+## Example Usage
+
+### Creating a Simple Inspection Profile
+
+If you don't have an existing inspection profile, you can create a simple one:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<inspections version="1.0">
+  <option name="myName" value="Project Default" />
+  <inspection_tool class="PhpDocMissingReturnTagInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpDocSignatureInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpMissingDocCommentInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpMissingParentCallCommonInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpMissingParentCallMagicInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpMultipleClassesDeclarationsInOneFile" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpRedundantCatchClauseInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpSingleClassInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpStanGlobal" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+</inspections>
+```
+
+Save this to a file named `inspection-profile.xml` in your project directory.
+
+### Running the Inspection
+
+You can run the inspection on your project's source code:
+
+```bash
+php bin/phpstorm-inspect --project-path=$(pwd) --profile=$(pwd)/inspection-profile.xml --directory=$(pwd)/src
+```
+
+### Self-Inspection Example
+
+A good way to test the tool is to use it to inspect its own code:
+
+```bash
+# Create a simple inspection profile
+cat > inspection-profile.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<inspections version="1.0">
+  <option name="myName" value="Project Default" />
+  <inspection_tool class="PhpDocMissingReturnTagInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpDocSignatureInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpMissingDocCommentInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpMissingParentCallCommonInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpMissingParentCallMagicInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpMultipleClassesDeclarationsInOneFile" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpRedundantCatchClauseInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpSingleClassInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpStanGlobal" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+</inspections>
+EOF
+
+# Run the inspection on the tool's own code
+php bin/phpstorm-inspect --project-path=$(pwd) --profile=$(pwd)/inspection-profile.xml --directory=$(pwd)/src
+```
+
+### Sample Output (Text Format)
+
+When running the self-inspection example above, you'll get output similar to this:
+
+```
+File: /path/to/project/src/PhpStormInspect/Command/InspectCommand.php
+--------------------------------------------------------------------------------
+Found 15 problems
+--------------------------------------------------------------------------------
+Line 25: Missing PHPDoc comment: Missing PHPDoc comment for class
+Line 27: Class constant type is missing: Class constant type is missing
+Line 28: Class constant type is missing: Class constant type is missing
+Line 30: Missing parent call for method: Missing parent method call
+Line 30: unused declaration: Method is never used.
+Line 72: Missing parent call for method: Missing parent method call
+Line 72: unused declaration: Method is never used.
+Line 83: Fully qualified name usage: Qualifier can be replaced with an import
+Line 89: Fully qualified name usage: Qualifier can be replaced with an import
+Line 110: Fully qualified name usage: Qualifier can be replaced with an import
+Line 120: Fully qualified name usage: Qualifier can be replaced with an import
+Line 125: Fully qualified name usage: Qualifier can be replaced with an import
+Line 142: Fully qualified name usage: Qualifier can be replaced with an import
+Line 152: Fully qualified name usage: Qualifier can be replaced with an import
+Line 165: Fully qualified name usage: Qualifier can be replaced with an import
+--------------------------------------------------------------------------------
+
+File: /path/to/project/src/PhpStormInspect/Inspection/InspectionRunner.php
+--------------------------------------------------------------------------------
+Found 5 problems
+--------------------------------------------------------------------------------
+Line 10: Missing PHPDoc comment: Missing PHPDoc comment for class
+Line 12: Class constant type is missing: Class constant type is missing
+Line 13: Class constant type is missing: Class constant type is missing
+Line 69: Fully qualified name usage: Qualifier can be replaced with an import
+Line 73: Fully qualified name usage: Qualifier can be replaced with an import
+--------------------------------------------------------------------------------
+
+... (more files and issues) ...
+```
+
+This output shows various code quality issues that PhpStorm's inspection has found, such as:
+- Missing PHPDoc comments
+- Missing class constant types
+- Missing parent method calls
+- Fully qualified name usage that could be replaced with imports
+- Unused declarations
+- And more
+
+### Sample Output (Checkstyle Format)
+
+You can also get the output in checkstyle format, which is useful for integration with CI tools:
+
+```bash
+php bin/phpstorm-inspect --project-path=$(pwd) --profile=$(pwd)/inspection-profile.xml --directory=$(pwd)/src --format=checkstyle
+```
+
+Output:
+
+```xml
+<?xml version="1.0"?>
+<checkstyle version="1.0.0">
+  <file name="/path/to/project/src/PhpStormInspect/Command/InspectCommand.php">
+    <error line="25" column="0" severity="weak warning" message="Missing PHPDoc comment for class"/>
+    <error line="27" column="0" severity="weak warning" message="Class constant type is missing"/>
+    <error line="28" column="0" severity="weak warning" message="Class constant type is missing"/>
+    <error line="30" column="0" severity="weak warning" message="Missing parent method call"/>
+    <error line="30" column="0" severity="weak warning" message="Method is never used."/>
+    <!-- More errors... -->
+  </file>
+  <file name="/path/to/project/src/PhpStormInspect/Inspection/InspectionRunner.php">
+    <error line="10" column="0" severity="weak warning" message="Missing PHPDoc comment for class"/>
+    <error line="12" column="0" severity="weak warning" message="Class constant type is missing"/>
+    <error line="13" column="0" severity="weak warning" message="Class constant type is missing"/>
+    <error line="69" column="0" severity="weak warning" message="Qualifier can be replaced with an import"/>
+    <error line="73" column="0" severity="weak warning" message="Qualifier can be replaced with an import"/>
+  </file>
+  <!-- More files... -->
+</checkstyle>
+```
+
+The checkstyle format is particularly useful for integrating with CI/CD pipelines and other tools that can process this standard format.
+
+## Tips for Effective Usage
+
+### Customizing Inspection Profiles
+
+For more comprehensive code quality checks, you can create a custom inspection profile in PhpStorm:
+
+1. Open your project in PhpStorm
+2. Go to Settings/Preferences → Editor → Inspections
+3. Configure the inspections you want to enable/disable
+4. Click the gear icon and select "Export" to save your profile as an XML file
+5. Use this exported file with the `--profile` option
+
+### Integrating with CI/CD
+
+To integrate with CI/CD pipelines:
+
+1. Use the checkstyle output format (`--format=checkstyle`)
+2. Save the output to a file: `php bin/phpstorm-inspect ... --format=checkstyle > phpstorm-inspection.xml`
+3. Use a tool like [checkstyle-formatter](https://www.npmjs.com/package/checkstyle-formatter) to convert the output to HTML or other formats
+4. Configure your CI system to fail the build if certain types or numbers of issues are found
+
+### Performance Considerations
+
+- The first run may take longer as PhpStorm builds its indexes
+- For large projects, consider inspecting specific directories rather than the entire project
+- Clearing the cache (which this tool does automatically) helps prevent stale cache issues but may increase inspection time
+
 ## License
 
 MIT License (see LICENSE file)
