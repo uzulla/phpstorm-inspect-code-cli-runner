@@ -1,0 +1,37 @@
+{
+    "name": "shopsys/phpstorm-inspect",
+    "description": "Package for running PhpStorm's inspections from CLI and displaying results",
+    "keywords": ["PhpStorm", "inspection", "code quality"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ShopSys",
+            "homepage": "https://www.shopsys.com/"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "PhpStormInspect\\": "src/PhpStormInspect"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PhpStormInspect\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=8.3",
+        "symfony/console": "^7.0",
+        "symfony/filesystem": "^7.0",
+        "symfony/process": "^7.0",
+        "arvenil/ninja-mutex": "^0.6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "phpstan/phpstan": "^1.10",
+        "squizlabs/php_codesniffer": "^3.7"
+    },
+    "bin": [
+        "bin/phpstorm-inspect"
+    ]
+}

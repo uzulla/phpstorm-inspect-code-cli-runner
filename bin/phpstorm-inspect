@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+// Find autoloader
+if (file_exists(__DIR__ . '/../../../autoload.php')) {
+    // package is installed as dependency of some root project
+    require_once __DIR__ . '/../../../autoload.php';
+} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    // package is standalone
+    require_once __DIR__ . '/../vendor/autoload.php';
+} else {
+    echo 'Autoloader not found. Please run composer install.' . PHP_EOL;
+    exit(1);
+}
+
+use PhpStormInspect\Command\InspectCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application('PhpStorm Inspect', '2.0.0');
+$application->add(new InspectCommand());
+$application->setDefaultCommand('inspect', true);
+$application->run();
