@@ -1,12 +1,18 @@
 {
-    "name": "shopsys/phpstorm-inspect",
-    "description": "Package for running PhpStorm's inspections from CLI and displaying results",
-    "keywords": ["PhpStorm", "inspection", "code quality"],
+    "name": "uzulla/phpstorm-inspect-code-cli-runner",
+    "description": "CLI tool that runs PhpStorm's code inspections and outputs structured results for easier refactoring and find bugs.",
+    "keywords": ["PhpStorm", "inspection", "code quality", "refactoring"],
     "license": "MIT",
     "authors": [
         {
+            "name": "Junichi Ishida",
+            "email": "zishida@gmail.com",
+            "homepage": "https://cfe.jp/"
+        },
+        {
             "name": "ShopSys",
-            "homepage": "https://www.shopsys.com/"
+            "homepage": "https://www.shopsys.com/",
+            "role": "Original author"
         }
     ],
     "autoload": {
