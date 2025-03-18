@@ -14,12 +14,18 @@ class InspectionRunnerTest extends TestCase
     public function testClearCache(): void
     {
         $filesystem = $this->createMock(Filesystem::class);
+        
+        // PHPUnit 10 では withConsecutive() が削除されたため、個別に設定
         $filesystem->expects($this->exactly(2))
             ->method('remove')
-            ->withConsecutive(
-                [$this->isType('array')],
-                [$this->isType('array')]
-            );
+            ->willReturnCallback(function ($arg) {
+                static $callCount = 0;
+                $callCount++;
+                
+                $this->assertIsArray($arg);
+                
+                return null;
+            });
         
         $runner = new InspectionRunner($filesystem);
         
