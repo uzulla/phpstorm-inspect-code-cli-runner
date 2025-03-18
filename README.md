@@ -2,8 +2,6 @@
 
 This package enables you to comfortably use PhpStorm as a CLI tool for static analysis.
 
-This is a modernized version of [shopsys/phpstorm-inspect](https://github.com/shopsys/phpstorm-inspect) updated for PHP 8.3.
-
 ## Features
 
 * Wrapper for PhpStorm's `inspect.sh` script with additional functionality
@@ -235,3 +233,5 @@ To integrate with CI/CD pipelines:
 ## License
 
 MIT License (see LICENSE file)
+
+> This is a modernized version of [shopsys/phpstorm-inspect](https://github.com/shopsys/phpstorm-inspect) updated for PHP 8.3.
