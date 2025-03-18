@@ -3,16 +3,10 @@
 
 declare(strict_types=1);
 
-// Find autoloader
-if (file_exists(__DIR__ . '/../../../autoload.php')) {
-    // package is installed as dependency of some root project
-    $autoloadPath = __DIR__ . '/../../../autoload.php';
-    $rootDir = dirname(__DIR__, 4);
-} elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    // package is standalone
-    $autoloadPath = __DIR__ . '/../vendor/autoload.php';
-    $rootDir = dirname(__DIR__);
-} else {
+// Always use the project root vendor directory
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+
+if (!file_exists($autoloadPath)) {
     echo 'Autoloader not found. Please run composer install.' . PHP_EOL;
     exit(1);
 }
@@ -20,11 +14,16 @@ if (file_exists(__DIR__ . '/../../../autoload.php')) {
 require_once $autoloadPath;
 
 use PhpStormInspect\Command\InspectCommand;
-use PhpStormInspect\Config\EnvLoader;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Dotenv\Dotenv;
 
 // Load environment variables
-EnvLoader::load($rootDir);
+$rootDir = dirname(__DIR__);
+$envFile = $rootDir . '/.env';
+if (file_exists($envFile)) {
+    $dotenv = new Dotenv();
+    $dotenv->load($envFile);
+}
 
 $application = new Application('PhpStorm Inspect', '2.0.0');
 $application->add(new InspectCommand());

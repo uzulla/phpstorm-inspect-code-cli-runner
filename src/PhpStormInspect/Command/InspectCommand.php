@@ -137,8 +137,8 @@ class InspectCommand extends Command
         
         // If option is not provided, try to get from environment
         if ($value === null) {
-            $envValue = \PhpStormInspect\Config\EnvLoader::get($envName);
-            if ($envValue === null) {
+            $envValue = $_ENV[$envName] ?? getenv($envName) ?: null;
+            if ($envValue === null || $envValue === false) {
                 throw new \InvalidArgumentException(
                     sprintf('Option "%s" is required or set it in .env file as %s', $optionName, $envName)
                 );
