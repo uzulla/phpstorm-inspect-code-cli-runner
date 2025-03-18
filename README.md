@@ -40,6 +40,31 @@ vendor/bin/phpstorm-inspect inspect \
 * `--directory`: Path in which are the inspected sources
 * `--format`: Format of output result, accepted values: "text" (default) / "checkstyle"
 
+### Environment Configuration
+
+You can configure PhpStorm binary paths using a `.env` file:
+
+1. Copy the `.env.example` file to `.env` in the project root:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file with your specific paths:
+   ```
+   PHPSTORM_INSPECT_SH=/path/to/PhpStorm/bin/inspect.sh
+   PHPSTORM_SYSTEM_PATH=/path/to/.WebIde*/system
+   ```
+
+When environment variables are set, you can omit the corresponding command-line options:
+
+```bash
+vendor/bin/phpstorm-inspect inspect \
+  --project-path=/path/to/project \
+  --profile=/path/to/project/.idea/inspectionProfiles/Project_Default.xml \
+  --directory=/path/to/inspect \
+  --format=text
+```
+
 ## License
 
 MIT License (see LICENSE file)

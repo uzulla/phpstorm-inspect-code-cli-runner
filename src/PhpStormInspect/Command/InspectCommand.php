@@ -72,8 +72,9 @@ class InspectCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            $inspectShPath = $this->getRequiredOption($input, 'inspect-sh');
-            $systemPath = $this->getRequiredOption($input, 'system-path');
+            // Get options from command line or environment variables
+            $inspectShPath = $this->getOptionWithEnvFallback($input, 'inspect-sh', 'PHPSTORM_INSPECT_SH');
+            $systemPath = $this->getOptionWithEnvFallback($input, 'system-path', 'PHPSTORM_SYSTEM_PATH');
             $projectPath = $this->getRequiredOption($input, 'project-path');
             $profilePath = $this->getRequiredOption($input, 'profile');
             $directoryPath = $this->getRequiredOption($input, 'directory');
@@ -117,6 +118,33 @@ class InspectCommand extends Command
         $value = $input->getOption($name);
         if ($value === null) {
             throw new \InvalidArgumentException(sprintf('Option "%s" is required', $name));
+        }
+        
+        $realpath = realpath($value);
+        if ($realpath === false) {
+            throw new \InvalidArgumentException(sprintf('Path "%s" not found', $value));
+        }
+        
+        return $realpath;
+    }
+    
+    /**
+     * Gets an option value with fallback to environment variable
+     */
+    private function getOptionWithEnvFallback(InputInterface $input, string $optionName, string $envName): string
+    {
+        $value = $input->getOption($optionName);
+        
+        // If option is not provided, try to get from environment
+        if ($value === null) {
+            $envValue = \PhpStormInspect\Config\EnvLoader::get($envName);
+            if ($envValue === null) {
+                throw new \InvalidArgumentException(
+                    sprintf('Option "%s" is required or set it in .env file as %s', $optionName, $envName)
+                );
+            }
+            
+            $value = $envValue;
         }
         
         $realpath = realpath($value);
